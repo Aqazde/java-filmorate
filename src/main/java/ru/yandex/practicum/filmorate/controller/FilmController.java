@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
@@ -35,7 +36,7 @@ public class FilmController {
     @PutMapping
     public Film updateFilm(@Valid @RequestBody Film film) {
         if (!films.containsKey(film.getId())) {
-            throw new ValidationException("Фильм с ID " + film.getId() + " не найден");
+            throw new NotFoundException("Фильм с ID " + film.getId() + " не найден");
         }
         if (film.getReleaseDate().isBefore(CINEMA_BIRTHDAY)) {
             log.warn("Дата релиза старая: {}", film.getReleaseDate());
