@@ -34,17 +34,39 @@ public class FilmController {
     }
 
     @PutMapping
-    public Film updateFilm(@Valid @RequestBody Film film) {
+    public Film updateFilm(@RequestBody Film film) {
         if (!films.containsKey(film.getId())) {
             throw new NotFoundException("Фильм с ID " + film.getId() + " не найден");
         }
-        if (film.getReleaseDate().isBefore(CINEMA_BIRTHDAY)) {
-            log.warn("Дата релиза старая: {}", film.getReleaseDate());
+
+        Film existing = films.get(film.getId());
+
+        if (film.getName() != null && !film.getName().isBlank()) {
+            existing.setName(film.getName());
+        }
+
+        if (film.getDescription() != null) {
+            if (film.getDescription().length() > 200) {
+                throw new ValidationException("максимальная длина описания — 200 символов");
+            }
+            existing.setDescription(film.getDescription());
+        }
+
+        if ( film.getReleaseDate() != null) {
+            if (film.getReleaseDate().isBefore(CINEMA_BIRTHDAY)) {
             throw new ValidationException("Дата релиза не может быть раньше 28 декабря 1895 года");
         }
-        films.put(film.getId(), film);
-        log.info("Обновлен фильм: {}", film);
-        return film;
+            existing.setReleaseDate(film.getReleaseDate());
+        }
+
+        if (film.getDuration() > 0) {
+            existing.setDuration(film.getDuration());
+        } else if (film.getDuration() != 0) {
+            throw new ValidationException("продолжительность фильма должна быть положительным числом");
+        }
+
+        log.info("Обновлен фильм: {}", existing);
+        return existing;
     }
 
     @GetMapping
