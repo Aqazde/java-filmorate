@@ -52,7 +52,7 @@ public class FilmController {
             existing.setDescription(film.getDescription());
         }
 
-        if ( film.getReleaseDate() != null) {
+        if (film.getReleaseDate() != null) {
             if (film.getReleaseDate().isBefore(CINEMA_BIRTHDAY)) {
             throw new ValidationException("Дата релиза не может быть раньше 28 декабря 1895 года");
         }
