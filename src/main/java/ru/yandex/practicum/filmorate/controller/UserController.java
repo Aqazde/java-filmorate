@@ -56,10 +56,12 @@ public class UserController {
             existingUser.setName(user.getName().isBlank() ? existingUser.getLogin() : user.getName());
         }
 
-        if (user.getBirthday().isAfter(LocalDate.now())) {
-            throw new ValidationException("Дата рождения не может быть в будущем");
+        if (user.getBirthday() != null) {
+            if (user.getBirthday().isAfter(LocalDate.now())) {
+                throw new ValidationException("Дата рождения не может быть в будущем");
+            }
+            existingUser.setBirthday(user.getBirthday());
         }
-        existingUser.setBirthday(user.getBirthday());
 
         log.info("Обновлен пользователь: {}", existingUser);
         return existingUser;
